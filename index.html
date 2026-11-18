@@ -1,110 +1,97 @@
-// Initialize school records from local storage or start with an empty array
-let schoolRecords = JSON.parse(localStorage.getItem('cspSchoolRecords')) || [];
-let currentActiveSchoolIndex = null;
-let isDeveloperMode = false;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gender Ratio in Schooling</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
 
-const form = document.getElementById('school-form');
-let myChart = null;
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-brand">📊 Gender Ratio Project</div>
+        <div class="nav-links">
+            <button id="nav-welcome" class="nav-btn active" onclick="showWelcome()">Welcome</button>
+            <button id="nav-dashboard" class="nav-btn" onclick="showDashboard()">Dashboard</button>
+            <button id="dev-mode-btn" class="dev-btn" onclick="toggleDevMode()">Developer Mode</button>
+        </div>
+    </nav>
 
-// Function to handle "Explore School Dashboard" navigation
-function showDashboard() {
-    const welcomeSection = document.getElementById('welcome-section');
-    const dashboardSection = document.getElementById('dashboard-section');
+    <!-- Welcome Section -->
+    <section id="welcome-section" class="container">
+        <header class="hero">
+            <h1>Gender Ratio in Schooling: A School-wise Analysis</h1>
+            <p>Community Service Project (CSP) Initiative</p>
+        </header>
 
-    if (welcomeSection && dashboardSection) {
-        welcomeSection.style.display = 'none';
-        dashboardSection.style.display = 'block';
-    } else {
-        // Fallback if sections use class names or page redirection
-        console.warn("Dashboard sections not found by ID. Checking alternative navigation...");
-    }
-}
+        <div class="card purpose-card">
+            <h2>1. Purpose & Equal Educational Opportunities</h2>
+            <p>This platform evaluates educational equity across multiple villages, ensuring that both boys and girls are receiving equal educational opportunities without gender disparity.</p>
+            <ul>
+                <li>📊 Analyzing enrollment distribution across communities.</li>
+                <li>📈 Tracking exact gender ratios (Girls per 100 Boys) to measure participation.</li>
+                <li>🎓 Promoting equal access to resources, attendance support, and retention.</li>
+            </ul>
+            <button class="primary-btn" onclick="showDashboard()">Explore School Dashboard →</button>
+        </div>
+    </section>
 
-// Function to toggle Developer Mode with a secure password via button click
-function toggleDevMode() {
-    //If developer mode is currently OFF, ask for password to turn it ON
-    if (!isDeveloperMode) {
-        let password = prompt("Enter Developer Password:");
-        
-        // Change "MySecretPassword123" to your preferred secure password
-        if (password === "MySecretPassword123") {
-            isDeveloperMode = true;
-            alert("Developer Mode Enabled Successfully.");
-        } else {
-            alert("Incorrect Password! Access Denied.");
-            return;
-        }
-    } else {
-        isDeveloperMode = false;
-        alert("Developer Mode Disabled.");
-    }
+    <!-- Dashboard Section -->
+    <section id="dashboard-section" class="container" style="display: none;">
+        <h2>School Enrollment & Gender Ratio Dashboard</h2>
 
-    const devFormSection = document.getElementById('developer-form-section');
-    if (devFormSection) {
-        devFormSection.style.display = isDeveloperMode ? 'block' : 'none';
-    }
+        <!-- Developer Mode Form (Hidden by Default) -->
+        <div id="developer-form-section" class="card form-card" style="display: none;">
+            <h3>Add New School Record (Admin Only)</h3>
+            <form id="school-form">
+                <div class="form-group">
+                    <label for="school-name">School / Village Name:</label>
+                    <input type="text" id="school-name" placeholder="e.g., ZPHS Guntur" required>
+                </div>
+                <div class="form-group">
+                    <label for="total-students">Total Students:</label>
+                    <input type="number" id="total-students" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="boys-count">Boys Count:</label>
+                    <input type="number" id="boys-count" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="girls-count">Girls Count:</label>
+                    <input type="number" id="girls-count" min="0" required>
+                </div>
+                <button type="submit" class="primary-btn">Save School Record</button>
+            </form>
+        </div>
 
-    const deleteBtn = document.getElementById('detail-delete-btn');
-    if (deleteBtn) {
-        deleteBtn.style.display = isDeveloperMode ? 'inline-block' : 'none';
-    }
-}
+        <!-- Records Table -->
+        <div class="card table-card">
+            <h3>School-wise Enrollment Records</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>School Name</th>
+                        <th>Total Students</th>
+                        <th>Boys</th>
+                        <th>Girls</th>
+                        <th>Gender Ratio (Girls/100 Boys)</th>
+                    </tr>
+                </thead>
+                <tbody id="records-table-body">
+                    <!-- Records populate dynamically from script.js -->
+                </tbody>
+            </table>
+        </div>
 
-// Function to display records safely
-function displayRecords() {
-    const tableBody = document.getElementById('records-table-body');
-    if (!tableBody) return;
-    
-    tableBody.innerHTML = '';
-    schoolRecords.forEach((record, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${record.name}</td>
-            <td>${record.total}</td>
-            <td>${record.boys}</td>
-            <td>${record.girls}</td>
-        `;
-        tableBody.appendChild(row);
-    });
-}
+        <!-- Analytics Chart -->
+        <div class="card chart-card">
+            <h3>Enrollment Comparison Chart</h3>
+            <canvas id="genderChart"></canvas>
+        </div>
+    </section>
 
-// Handle form submission for adding new records
-if (form) {
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        if (!isDeveloperMode) {
-            alert("Access Denied. Developer Mode required to add records.");
-            return;
-        }
-
-        const schoolName = document.getElementById('school-name').value;
-        const totalStudents = parseInt(document.getElementById('total-students').value);
-        const boysCount = parseInt(document.getElementById('boys-count').value);
-        const girlsCount = parseInt(document.getElementById('girls-count').value);
-
-        if (boysCount + girlsCount !== totalStudents) {
-            alert("Error: Total students must equal the sum of boys and girls.");
-            return;
-        }
-
-        const newRecord = {
-            name: schoolName,
-            total: totalStudents,
-            boys: boysCount,
-            girls: girlsCount
-        };
-
-        schoolRecords.push(newRecord);
-        localStorage.setItem('cspSchoolRecords', JSON.stringify(schoolRecords));
-        
-        alert("School record added successfully!");
-        form.reset();
-        displayRecords();
-    });
-}
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
-    displayRecords();
-});
+    <script src="script.js"></script>
+</body>
+</html>
