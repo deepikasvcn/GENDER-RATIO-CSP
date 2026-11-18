@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gender Ratio in Schooling</title>
+    <title>Gender Ratio in Schooling - Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -13,36 +12,19 @@
     <nav class="navbar">
         <div class="nav-brand">📊 Gender Ratio Project</div>
         <div class="nav-links">
-            <button id="nav-welcome" class="nav-btn active" onclick="showWelcome()">Welcome</button>
-            <button id="nav-dashboard" class="nav-btn" onclick="showDashboard()">Dashboard</button>
+            <button class="nav-btn active" onclick="showDashboard()">Dashboard</button>
             <button id="dev-mode-btn" class="dev-btn" onclick="toggleDevMode()">Developer Mode</button>
         </div>
     </nav>
 
-    <!-- Welcome Section -->
-    <section id="welcome-section" class="container">
+    <!-- Dashboard Section -->
+    <main class="container">
         <header class="hero">
-            <h1>Gender Ratio in Schooling: A School-wise Analysis</h1>
-            <p>Community Service Project (CSP) Initiative</p>
+            <h1>School Directory & Analytics Dashboard</h1>
+            <p>Select a school to view comprehensive enrollment, equity metrics, scholarships, and download reports.</p>
         </header>
 
-        <div class="card purpose-card">
-            <h2>1. Purpose & Equal Educational Opportunities</h2>
-            <p>This platform evaluates educational equity across multiple villages, ensuring that both boys and girls are receiving equal educational opportunities without gender disparity.</p>
-            <ul>
-                <li>📊 Analyzing enrollment distribution across communities.</li>
-                <li>📈 Tracking exact gender ratios (Girls per 100 Boys) to measure participation.</li>
-                <li>🎓 Promoting equal access to resources, attendance support, and retention.</li>
-            </ul>
-            <button class="primary-btn" onclick="showDashboard()">Explore School Dashboard →</button>
-        </div>
-    </section>
-
-    <!-- Dashboard Section -->
-    <section id="dashboard-section" class="container" style="display: none;">
-        <h2>School Enrollment & Gender Ratio Dashboard</h2>
-
-        <!-- Developer Mode Form (Hidden by Default) -->
+        <!-- Developer Mode Form (Hidden by Default, Password Protected) -->
         <div id="developer-form-section" class="card form-card" style="display: none;">
             <h3>Add New School Record (Admin Only)</h3>
             <form id="school-form">
@@ -66,31 +48,19 @@
             </form>
         </div>
 
-        <!-- Records Table -->
-        <div class="card table-card">
-            <h3>School-wise Enrollment Records</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>School Name</th>
-                        <th>Total Students</th>
-                        <th>Boys</th>
-                        <th>Girls</th>
-                        <th>Gender Ratio (Girls/100 Boys)</th>
-                    </tr>
-                </thead>
-                <tbody id="records-table-body">
-                    <!-- Records populate dynamically from script.js -->
-                </tbody>
-            </table>
+        <!-- Search Bar Section -->
+        <div class="card search-card">
+            <input type="text" id="school-search-input" placeholder="🔍 Search schools by name or village..." onkeyup="filterSchools()">
         </div>
 
-        <!-- Analytics Chart -->
-        <div class="card chart-card">
-            <h3>Enrollment Comparison Chart</h3>
-            <canvas id="genderChart"></canvas>
+        <!-- School List Grid / Cards -->
+        <div class="card list-card">
+            <h3>Registered Schools</h3>
+            <div id="school-list-container" class="school-grid">
+                <!-- Dynamically populated school list items -->
+            </div>
         </div>
-    </section>
+    </main>
 
     <script src="script.js"></script>
 </body>
