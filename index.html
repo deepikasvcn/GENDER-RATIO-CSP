@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gender Ratio in Schooling</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-brand">📚 Gender Ratio Project</div>
+        <ul class="nav-links">
+            <li><a href="#" onclick="switchTab('welcome')" id="nav-welcome" class="active">Welcome</a></li>
+            <li><a href="#" onclick="switchTab('dashboard')" id="nav-dashboard">Dashboard</a></li>
+            <li class="dev-toggle-li">
+                <label class="dev-switch">
+                    <input type="checkbox" id="dev-mode-checkbox" onclick="toggleDevMode()">
+                    <span class="slider"></span> Developer Mode
+                </label>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- WELCOME VIEW -->
+    <div id="welcome-view" class="view-section">
+        <header class="hero">
+            <h1>Gender Ratio in Schooling: A School-wise Analysis</h1>
+            <p>Community Service Project (CSP) Initiative</p>
+        </header>
+
+        <main class="container">
+            <section class="card-box">
+                <h2>1. Purpose & Equal Educational Opportunities</h2>
+                <p>This platform evaluates educational equity across multiple villages, ensuring that both boys and girls are receiving equal educational opportunities without gender disparity.</p>
+                <ul>
+                    <li>👥 Analyzing enrollment distribution across communities.</li>
+                    <li>📊 Tracking exact gender ratios (Girls per 100 Boys) to measure participation.</li>
+                    <li>⚖️ Promoting equal access to resources, attendance support, and retention.</li>
+                </ul>
+            </section>
+
+            <div class="text-center">
+                <button onclick="switchTab('dashboard')" class="btn-primary">Explore School Dashboard →</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboard-view" class="view-section" style="display: none;">
+        <header class="hero">
+            <h1>Project Dashboard</h1>
+            <p>Select any registered school below to inspect detailed analytics and gender ratio breakdowns.</p>
+        </header>
+
+        <main class="container">
+            <!-- Summary Cards Section -->
+            <section class="dashboard-cards">
+                <div class="card">
+                    <h3 id="total-boys">0</h3>
+                    <p>Total Boys</p>
+                </div>
+                <div class="card">
+                    <h3 id="total-girls">0</h3>
+                    <p>Total Girls</p>
+                </div>
+                <div class="card">
+                    <h3 id="total-students">0</h3>
+                    <p>Total Students</p>
+                </div>
+                <div class="card">
+                    <h3 id="total-dropouts">0</h3>
+                    <p>Total Dropouts</p>
+                </div>
+                <div class="card">
+                    <h3 id="total-schools">0</h3>
+                    <p>Schools Registered</p>
+                </div>
+            </section>
+
+            <!-- School List Section -->
+            <section class="form-section">
+                <h2>Registered Schools (Click a School to View Deep Insights)</h2>
+                <div id="school-list-container" class="school-grid">
+                    <!-- School cards will appear here -->
+                </div>
+            </section>
+
+            <!-- Village & School Registration Form (Developer Only) -->
+            <section class="form-section" id="developer-form-section" style="display: none;">
+                <h2>[Developer Mode] Add Village & School Data</h2>
+                <form id="school-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="village-name">Village Name</label>
+                            <input type="text" id="village-name" placeholder="e.g., Pedakakani">
+                        </div>
+                        <div class="form-group">
+                            <label for="school-name">School Name</label>
+                            <input type="text" id="school-name" placeholder="e.g., ZP High School">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="boys-count">Enrolled Boys</label>
+                            <input type="number" id="boys-count" min="0" placeholder="e.g., 120">
+                        </div>
+                        <div class="form-group">
+                            <label for="girls-count">Enrolled Girls</label>
+                            <input type="number" id="girls-count" min="0" placeholder="e.g., 100">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="boys-attendance">Boys Attendance (%)</label>
+                            <input type="number" id="boys-attendance" min="0" max="100" step="0.1" placeholder="e.g., 88.5">
+                        </div>
+                        <div class="form-group">
+                            <label for="girls-attendance">Girls Attendance (%)</label>
+                            <input type="number" id="girls-attendance" min="0" max="100" step="0.1" placeholder="e.g., 91.0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="boys-dropouts">Boys Dropouts</label>
+                            <input type="number" id="boys-dropouts" min="0" placeholder="e.g., 4">
+                        </div>
+                        <div class="form-group">
+                            <label for="girls-dropouts">Girls Dropouts</label>
+                            <input type="number" id="girls-dropouts" min="0" placeholder="e.g., 2">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn">Save School Record</button>
+                </form>
+            </section>
+
+            <!-- Visual Charts Section -->
+            <section class="chart-section">
+                <h2>Overall Enrollment Analytics</h2>
+                <div class="chart-container">
+                    <canvas id="enrollmentChart"></canvas>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- SCHOOL DETAIL VIEW (Enhanced Rich Description & Ratio Breakdown) -->
+    <div id="school-detail-view" class="view-section" style="display: none;">
+        <header class="hero">
+            <button onclick="switchTab('dashboard')" class="btn-back">← Back to Dashboard</button>
+            <h1 id="detail-school-title">School Name</h1>
+            <p id="detail-village-subtitle">Village Name</p>
+        </header>
+
+        <main class="container">
+            <!-- Enhanced School Description & Educational Equity -->
+            <section class="card-box">
+                <h2>🏫 Institution Background & Equal Opportunity Insights</h2>
+                <p id="school-narrative-description" class="narrative-text">
+                    Loading detailed school description...
+                </p>
+            </section>
+
+            <section class="card-box">
+                <h2>📊 Enrollment Distribution</h2>
+                <div class="detail-stats-grid">
+                    <div class="stat-box">
+                        <h4 id="det-boys">0</h4>
+                        <p>Enrolled Boys</p>
+                    </div>
+                    <div class="stat-box">
+                        <h4 id="det-girls">0</h4>
+                        <p>Enrolled Girls</p>
+                    </div>
+                    <div class="stat-box">
+                        <h4 id="det-total">0</h4>
+                        <p>Total Student Body</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detailed Gender Ratio Breakdown -->
+            <section class="card-box">
+                <h2>⚖️ Advanced Gender Ratio Analysis</h2>
+                <p>The gender ratio metric evaluates female student participation relative to male students within this institution:</p>
+                <div class="formula-box">
+                    $$\text{Gender Ratio (Girls per 100 Boys)} = \left(\frac{\text{Enrolled Girls}}{\text{Enrolled Boys}}\right) \times 100$$
+                </div>
+                <div id="detailed-breakdown-explanation" class="calc-explanation">
+                    <!-- Dynamic math breakdown text goes here -->
+                </div>
+                <div class="ratio-result-badge" id="equity-status-badge">
+                    Evaluating parity status...
+                </div>
+            </section>
+
+            <section class="card-box">
+                <h2>📋 Attendance & Retention Metrics</h2>
+                <ul class="metrics-list">
+                    <li><strong>Boys Daily Attendance Rate:</strong> <span id="det-b-att">0</span>%</li>
+                    <li><strong>Girls Daily Attendance Rate:</strong> <span id="det-g-att">0</span>%</li>
+                    <li><strong>Recorded Boys Dropouts:</strong> <span id="det-b-drop">0</span></li>
+                    <li><strong>Recorded Girls Dropouts:</strong> <span id="det-g-drop">0</span></li>
+                    <li><strong>Institutional Dropout Rate:</strong> <span id="det-drop-rate">0%</span></li>
+                </ul>
+            </section>
+
+            <div class="detail-actions">
+                <button onclick="downloadSingleSchoolCSV()" class="btn-success">📥 Download Comprehensive School Report</button>
+                <button id="detail-delete-btn" onclick="" class="delete-btn" style="display: none;">🗑️ [Developer] Delete School Record</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
